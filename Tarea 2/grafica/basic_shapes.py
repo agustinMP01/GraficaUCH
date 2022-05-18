@@ -43,14 +43,19 @@ __license__ = "MIT"
 
 
 # A simple class container to store vertices and indices that define a shape
+# class Shape:
+#     def __init__(self, vertices, indices):
+#         self.vertices = vertices
+#         self.indices = indices
+
+#     def __str__(self):
+#         return "vertices: " + str(self.vertices) + "\n" \
+#                                                    "indices: " + str(self.indices)
 class Shape:
-    def __init__(self, vertices, indices):
+    def __init__(self, vertices, indices, textureFileName=None):
         self.vertices = vertices
         self.indices = indices
-
-    def __str__(self):
-        return "vertices: " + str(self.vertices) + "\n" \
-                                                   "indices: " + str(self.indices)
+        self.textureFileName = textureFileName
 
 
 def merge(destinationShape, strideSize, sourceShape):
