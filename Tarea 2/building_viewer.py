@@ -1,14 +1,3 @@
-# coding=utf-8
-"""
-Se agrega la torre Eiffel al medio, para mostrarles cómo funcionan
-las mallas y que podemos tenerlas almacenadas en objetos
-.OBJ
-Estos se pueden generar en programas como Blender, Maya, Rhino o
-SketchUp. También es común descargarlos de páginas como:
-https://3dwarehouse.sketchup.com/search/?q=eiffel%20tower
-https://quixel.com/megascans/home?category=3D%20asset&category=building
-Etc. Lo ideal es googlear por .OBJ o .OFF 3D models
-"""
 
 import glfw
 from OpenGL.GL import *
@@ -33,8 +22,8 @@ if __name__ == "__main__":
     if not glfw.init():
         glfw.set_window_should_close(window, True)
 
-    width = 600
-    height = 600
+    width = 1920
+    height = 1080
 
     window = glfw.create_window(width, height, "Viewer", None, None)
 
@@ -62,11 +51,13 @@ if __name__ == "__main__":
     # Creating shapes on GPU memory
 
     floor = modelost.create_floor(textureShaderProgram)
+    empire = modelost.empire_state(textureShaderProgram)
 
     # Creamos una GPUShape a partir de un obj
     # Acá pueden poner carrot.obj, eiffel.obj, suzanne.obj
 
     # View and projection
+    '''ACA VA A IR EL CAMBIO PARA ORTHO Y PERSP '''
     projection = tr.perspective(60, float(width)/float(height), 0.1, 100)
 
     t0 = glfw.get_time()
@@ -102,15 +93,21 @@ if __name__ == "__main__":
 
         if glfw.get_key(window, glfw.KEY_A) == glfw.PRESS:
             controller.theta += 2*dt
-            controller.eye = [-1*np.cos(controller.theta),1*np.sin(controller.theta), controller.eye[2]]
+            controller.eye = [-controller.r*np.cos(controller.theta),controller.r*np.sin(controller.theta), controller.eye[2]]
 
         if glfw.get_key(window, glfw.KEY_D) == glfw.PRESS:
             controller.theta -= 2*dt
-            controller.eye = [-1*np.cos(controller.theta),1*np.sin(controller.theta), controller.eye[2]]
+            controller.eye = [-controller.r*np.cos(controller.theta),controller.r*np.sin(controller.theta), controller.eye[2]]
 
         if controller.eye[2] <= 0.1:
             controller.eye[2] = 0.1
 
+        if glfw.get_key(window, glfw.KEY_UP) == glfw.PRESS:
+            controller.r -= 2*dt
+            controller.eye = [-controller.r*np.cos(controller.theta),controller.r*np.sin(controller.theta), controller.eye[2]]
+        if glfw.get_key(window, glfw.KEY_DOWN) == glfw.PRESS:
+            controller.r += 2*dt
+            controller.eye = [-controller.r*np.cos(controller.theta),controller.r*np.sin(controller.theta), controller.eye[2]]            
     #####################################################        
 
         controller.at = np.array([0, 0, controller.at[2]])
@@ -125,6 +122,7 @@ if __name__ == "__main__":
         glUniformMatrix4fv(glGetUniformLocation(textureShaderProgram.shaderProgram, "view"), 1, GL_TRUE, view)
 
         sg.drawSceneGraphNode(floor, textureShaderProgram, "model")
+        sg.drawSceneGraphNode(empire, textureShaderProgram, "model" )
 
 
         # Once the drawing is rendered, buffers are swap so an uncomplete drawing is never seen.
