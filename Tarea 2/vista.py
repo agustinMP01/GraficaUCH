@@ -46,6 +46,8 @@ if __name__ == "__main__":
 
     '''MODELOS '''
     skybox = Skybox(textureShaderProgram)
+    flappy = Flappy(textureShaderProgram)
+    floor = Floor(textureShaderProgram)
 
     '''CAMARA Y PROYECCION'''
     projection = tr.perspective(60, float(width)/float(height), 0.1, 100)
@@ -76,12 +78,10 @@ if __name__ == "__main__":
             controller.theta -= 2 * dt
 
         if glfw.get_key(window, glfw.KEY_W) == glfw.PRESS:
-            controller.eye += (controller.at - controller.eye) * dt
-            controller.at += (controller.at - controller.eye) * dt
+            controller.eye[2] += dt
 
         if glfw.get_key(window, glfw.KEY_S) == glfw.PRESS:
-            controller.eye -= (controller.at - controller.eye) * dt
-            controller.at -= (controller.at - controller.eye) * dt
+            controller.eye[2] -= dt
 
         at_x = controller.eye[0] + np.cos(controller.theta)
         at_y = controller.eye[1] + np.sin(controller.theta)
@@ -90,11 +90,13 @@ if __name__ == "__main__":
         view = tr.lookAt(controller.eye, controller.at, controller.up)
 
         #Updates
-
+        # flappy.update(dt)
         #Logica
 
         #Draws
-        skybox.draw(textureShaderProgram,projection,view)
+        # skybox.draw(textureShaderProgram,projection,view)
+        flappy.draw(textureShaderProgram, projection, view)
+        floor.draw(textureShaderProgram, projection, view)
 
         glfw.swap_buffers(window)
 

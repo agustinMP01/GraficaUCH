@@ -4,23 +4,18 @@ import glfw
 class Controller:
     def __init__(self):
 
-        self.theta = np.pi
-        self.eye = [0, 0, 0.1]
-        self.at = [0, 1, 0.1]
-        self.up = [0, 0, 1]
+        self.theta = -np.pi/2
+        self.eye = [-1*np.cos(self.theta),1*np.sin(self.theta), 0.1] #Donde estoy
+        self.at = [0, 0, 0] #Hacia donde miro
+        self.up = [0, 0, 1] #No se toca, indica normal
 
-    def on_key(self,window, key, scancode, action, mods):
-        
-        if not (action == glfw.PRESS):
+    def on_key(self, window, key, scancode, action, mods):
+
+        if action != glfw.PRESS and action != glfw.REPEAT:
             return
 
-        elif key == glfw.KEY_ESCAPE:
+        if key == glfw.KEY_ESCAPE:
             glfw.set_window_should_close(window, True)
-    
-        elif key == glfw.KEY_W:
-            self.eye += (self.at - self.eye) * 0.05
-            self.at += (self.at - self.eye) * 0.05
-
-
+            
         else:
-            print('Unknown key')    
+            print('Unknown key')
