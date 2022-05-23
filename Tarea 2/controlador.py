@@ -9,6 +9,7 @@ class Controller:
         self.eye = [-self.r*np.cos(self.theta),self.r*np.sin(self.theta), 0.1] #Donde estoy
         self.at = [0, 0, 0] #Hacia donde miro
         self.up = [0, 0, 1] #No se toca, indica normal
+        self.current = 0
 
     def on_key(self, window, key, scancode, action, mods):
 
@@ -33,5 +34,13 @@ class Controller:
             self.eye = [-1*np.cos(self.theta),1*np.sin(self.theta), 0.1] #Donde estoy
             self.at = [0, 0, 0] #Hacia donde miro
             self.up = [0, 0, 1] #No se toca, indica normal    
+
+        #CAMBIAR EDIFICIOS
+        if key == glfw.KEY_E:
+            self.current = 0
+
+        if key == glfw.KEY_W:
+            self.current = 1
+
         else:
             print('Unknown key')

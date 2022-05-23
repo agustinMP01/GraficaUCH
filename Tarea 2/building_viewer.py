@@ -40,8 +40,9 @@ if __name__ == "__main__":
     # Creating shader programs for textures and for colors
     textureShaderProgram = es.SimpleTextureModelViewProjectionShaderProgram()
     lightShaderProgram = ls.SimpleGouraudShaderProgram()  # Spoiler de luces
+    textureLightShaderProgram = ls.SimpleTextureGouraudShaderProgram()
 
-    # Setting up the clear screen color
+    #Color de fondo*
     glClearColor(0, 0.7, 0.5, 0.8)
 
     # As we work in 3D, we need to check which part is in front,
@@ -51,13 +52,12 @@ if __name__ == "__main__":
     # Creating shapes on GPU memory
 
     floor = modelost.create_floor(textureShaderProgram)
-    empire = modelost.empire_state(textureShaderProgram)
+    empire = modelost.empire_state(textureLightShaderProgram)
+    willis = modelost.willis_tower(textureLightShaderProgram)
 
-    # Creamos una GPUShape a partir de un obj
-    # Acá pueden poner carrot.obj, eiffel.obj, suzanne.obj
+    torres = [empire,willis]
 
-    # View and projection
-    '''ACA VA A IR EL CAMBIO PARA ORTHO Y PERSP '''
+    #projection
     projection = tr.perspective(60, float(width)/float(height), 0.1, 100)
 
     t0 = glfw.get_time()
@@ -85,27 +85,31 @@ if __name__ == "__main__":
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
    #####################################################
-        if glfw.get_key(window, glfw.KEY_W) == glfw.PRESS:
+
+
+   #Flechas controlan la camara, a los lados gira y hacia arriba/abajo sube y baja. Con Z se hace zoom, con X se aleja
+
+        if glfw.get_key(window, glfw.KEY_UP) == glfw.PRESS:
             controller.eye[2] += 2*dt
 
-        if glfw.get_key(window, glfw.KEY_S) == glfw.PRESS:
+        if glfw.get_key(window, glfw.KEY_DOWN) == glfw.PRESS:
             controller.eye[2] -= 2*dt
 
-        if glfw.get_key(window, glfw.KEY_A) == glfw.PRESS:
+        if glfw.get_key(window, glfw.KEY_LEFT) == glfw.PRESS:
             controller.theta += 2*dt
             controller.eye = [-controller.r*np.cos(controller.theta),controller.r*np.sin(controller.theta), controller.eye[2]]
 
-        if glfw.get_key(window, glfw.KEY_D) == glfw.PRESS:
+        if glfw.get_key(window, glfw.KEY_RIGHT) == glfw.PRESS:
             controller.theta -= 2*dt
             controller.eye = [-controller.r*np.cos(controller.theta),controller.r*np.sin(controller.theta), controller.eye[2]]
 
         if controller.eye[2] <= 0.1:
             controller.eye[2] = 0.1
 
-        if glfw.get_key(window, glfw.KEY_UP) == glfw.PRESS:
+        if glfw.get_key(window, glfw.KEY_Z) == glfw.PRESS:
             controller.r -= 2*dt
             controller.eye = [-controller.r*np.cos(controller.theta),controller.r*np.sin(controller.theta), controller.eye[2]]
-        if glfw.get_key(window, glfw.KEY_DOWN) == glfw.PRESS:
+        if glfw.get_key(window, glfw.KEY_X) == glfw.PRESS:
             controller.r += 2*dt
             controller.eye = [-controller.r*np.cos(controller.theta),controller.r*np.sin(controller.theta), controller.eye[2]]            
     #####################################################        
@@ -116,16 +120,29 @@ if __name__ == "__main__":
 
 ###########################################################################
 
-        # Drawing dice (with texture, another shader program)
+        #W: Willis
+        #E: Empire State
+
+        current = torres[controller.current]
+
+
+
+        # Drawing
         glUseProgram(textureShaderProgram.shaderProgram)
         glUniformMatrix4fv(glGetUniformLocation(textureShaderProgram.shaderProgram, "projection"), 1, GL_TRUE, projection)
         glUniformMatrix4fv(glGetUniformLocation(textureShaderProgram.shaderProgram, "view"), 1, GL_TRUE, view)
 
         sg.drawSceneGraphNode(floor, textureShaderProgram, "model")
-        sg.drawSceneGraphNode(empire, textureShaderProgram, "model" )
+
+        #LUZ? Se va a negro
+        glUseProgram(textureLightShaderProgram.shaderProgram)
+        glUniformMatrix4fv(glGetUniformLocation(textureLightShaderProgram.shaderProgram, "view"), 1, GL_TRUE, view)
+        glUniformMatrix4fv(glGetUniformLocation(textureLightShaderProgram.shaderProgram, "projection"), 1, GL_TRUE, projection)
+        # textureLightShaderProgram.set_light_attributes()
+        
+        sg.drawSceneGraphNode(current, textureLightShaderProgram, "model")
 
 
-        # Once the drawing is rendered, buffers are swap so an uncomplete drawing is never seen.
         glfw.swap_buffers(window)
 
     glfw.terminate()

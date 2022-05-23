@@ -28,7 +28,7 @@ def create_floor(pipeline):
 
 def empire_state(pipeline):
     #Caja
-    shapeBox = bs.createTextureCube("building.jpg")
+    shapeBox = bs.createTextureNormalsCube("building.jpg")
     gpuBox = es.GPUShape().initBuffers()
     pipeline.setupVAO(gpuBox)
     gpuBox.texture = es.textureSimpleSetup(
@@ -103,3 +103,81 @@ def empire_state(pipeline):
     empire.childs += [base, main, floor1, floor2, floor3, floor4]
 
     return empire
+
+def willis_tower(pipeline):
+    #Caja
+    shapeBox = bs.createTextureNormalsCube("willis2.jpg")
+    gpuBox = es.GPUShape().initBuffers()
+    pipeline.setupVAO(gpuBox)
+    gpuBox.texture = es.textureSimpleSetup(
+        getAssetPath("willis2.jpg"), GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR)
+    gpuBox.fillBuffers(shapeBox.vertices, shapeBox.indices, GL_STATIC_DRAW)
+
+    #torre 50
+    torre50_1 = sg.SceneGraphNode("torre50_1")
+    torre50_1.transform = tr.matmul([tr.scale(0.3,0.3,1.5),tr.translate(1,-1,0.5)])
+    torre50_1.childs += [gpuBox]
+
+
+    torre50_2 = sg.SceneGraphNode("torre50_2")
+    torre50_2.transform = tr.matmul([tr.scale(0.3,0.3,1.5),tr.translate(-1,1,0.5)])
+    torre50_2.childs += [gpuBox]
+
+    torre50 = sg.SceneGraphNode("torre50")
+    torre50.transform = tr.identity()
+    torre50.childs += [torre50_1, torre50_2]
+
+    #torre 66
+    torre66_1 = sg.SceneGraphNode("torre66_1")
+    torre66_1.transform = tr.matmul([tr.scale(0.3,0.3,1.89),tr.translate(-1,-1,0.5)])
+    torre66_1.childs += [gpuBox]
+
+
+    torre66_2 = sg.SceneGraphNode("torre66_2")
+    torre66_2.transform = tr.matmul([tr.scale(0.3,0.3,1.89),tr.translate(1,1,0.5)])
+    torre66_2.childs += [gpuBox]
+
+    torre66 = sg.SceneGraphNode("torre66")
+    torre66.transform = tr.identity()
+    torre66.childs += [torre66_1, torre66_2]
+
+    #torre 90
+    torre90_1 = sg.SceneGraphNode("torre90_1")
+    torre90_1.transform = tr.matmul([tr.scale(0.3,0.3,2.576),tr.translate(0,-1,0.5)])
+    torre90_1.childs += [gpuBox]
+
+
+    torre90_2 = sg.SceneGraphNode("torre90_2")
+    torre90_2.transform = tr.matmul([tr.scale(0.3,0.3,2.576),tr.translate(0,1,0.5)])
+    torre90_2.childs += [gpuBox]
+
+
+    torre90_3 = sg.SceneGraphNode("torre90_3")
+    torre90_3.transform = tr.matmul([tr.scale(0.3,0.3,2.576),tr.translate(1,0,0.5)])
+    torre90_3.childs += [gpuBox]
+
+
+    torre90 = sg.SceneGraphNode("torre90")
+    torre90.transform = tr.identity()
+    torre90.childs += [torre90_1, torre90_2, torre90_3]
+
+    #torre 108
+    torre108_1 = sg.SceneGraphNode("torre108_1")
+    torre108_1.transform = tr.matmul([tr.scale(0.3,0.3,3.094),tr.translate(0,0,0.5)])
+    torre108_1.childs += [gpuBox]
+
+
+    torre108_2 = sg.SceneGraphNode("torre108_2")
+    torre108_2.transform = tr.matmul([tr.scale(0.3,0.3,3.094),tr.translate(-1,0,0.5)])
+    torre108_2.childs += [gpuBox]
+
+    torre108 = sg.SceneGraphNode("torre108")
+    torre108.transform = tr.identity()
+    torre108.childs += [torre108_1, torre108_2]
+
+    #willis tower
+    willis = sg.SceneGraphNode("willis")
+    willis.transform = tr.uniformScale(1)
+    willis.childs += [torre50, torre66, torre90, torre108]
+
+    return willis
