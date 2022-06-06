@@ -181,3 +181,11 @@ def willis_tower(pipeline):
     willis.childs += [torre50, torre66, torre90, torre108]
 
     return willis
+
+def burj(pipeline):
+
+    #curva?
+    
+
+
+    return burj

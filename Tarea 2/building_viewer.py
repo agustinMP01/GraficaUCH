@@ -15,7 +15,6 @@ import off_obj_reader as obj
 from controlador import *
 import modelost
 
-
 if __name__ == "__main__":
 
     # Initialize glfw
@@ -54,19 +53,23 @@ if __name__ == "__main__":
     floor = modelost.create_floor(textureShaderProgram)
     empire = modelost.empire_state(textureLightShaderProgram)
     willis = modelost.willis_tower(textureLightShaderProgram)
+    burj = modelost.burj(textureLightShaderProgram)
 
-    torres = [empire,willis]
+
+    torres = [empire, willis, burj]
 
     #projection
-    projection = tr.perspective(60, float(width)/float(height), 0.1, 100)
+    pers = tr.perspective(60, float(width)/float(height), 0.1, 100)
+
+    ortho = tr.ortho(-2, 2, 2, -2 , 0.1, 1)
+
+    cameras = [pers, ortho]
+    cam_current = cameras[0]
 
     t0 = glfw.get_time()
 
     # glfw will swap buffers as soon as possible
     glfw.swap_interval(0)
-
-    t1 = glfw.get_time()
-    t1 = glfw.get_time()
 
     while not glfw.window_should_close(window):
         # Using GLFW to check for input events
@@ -85,33 +88,71 @@ if __name__ == "__main__":
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
    #####################################################
+        if glfw.get_key(window, glfw.KEY_1) == glfw.PRESS:
+            cam_current = cameras[0]
+            controller.lock = True
+            controller.theta = 0
+            controller.eye = [1, 1, 0.1]   
+            controller.at = [0, 0, 1]          
 
+        if glfw.get_key(window, glfw.KEY_2) == glfw.PRESS:
+            cam_current = cameras[0]
+            controller.lock = True
+            controller.theta = 0
+            controller.eye = [-1, -1, 2]   
+            controller.at = [0, 0, 0.5]   
+
+        if glfw.get_key(window, glfw.KEY_3) == glfw.PRESS:
+            cam_current = cameras[1]
+            controller.lock = True
+            controller.theta = 0
+            controller.eye = [1, 1, 0.1]   
+            controller.at = [0, 0, 1]          
+
+        if glfw.get_key(window, glfw.KEY_4) == glfw.PRESS:
+            cam_current = cameras[1]
+            controller.lock = True
+            controller.theta = 0
+            controller.eye = [0, -1, 2]   
+            controller.at = [0, 0, 0.5]   
+
+        if glfw.get_key(window, glfw.KEY_5) == glfw.PRESS:
+            cam_current = cameras[0]
+            controller.theta = -np.pi/2
+            controller.eye = [-1*np.cos(controller.theta),1*np.sin(controller.theta), 0.1] #Donde estoy
+            controller.at = [0, 0, 0] #Hacia donde miro
+            controller.up = [0, 0, 1] #No se toca, indica normal    
+            controller.lock = False
 
    #Flechas controlan la camara, a los lados gira y hacia arriba/abajo sube y baja. Con Z se hace zoom, con X se aleja
 
-        if glfw.get_key(window, glfw.KEY_UP) == glfw.PRESS:
-            controller.eye[2] += 2*dt
+        if not controller.lock:
 
-        if glfw.get_key(window, glfw.KEY_DOWN) == glfw.PRESS:
-            controller.eye[2] -= 2*dt
+            print(controller.lock)
+            if glfw.get_key(window, glfw.KEY_UP) == glfw.PRESS:
+                controller.eye[2] += 2*dt
 
-        if glfw.get_key(window, glfw.KEY_LEFT) == glfw.PRESS:
-            controller.theta += 2*dt
-            controller.eye = [-controller.r*np.cos(controller.theta),controller.r*np.sin(controller.theta), controller.eye[2]]
+            if glfw.get_key(window, glfw.KEY_DOWN) == glfw.PRESS:
+                controller.eye[2] -= 2*dt
 
-        if glfw.get_key(window, glfw.KEY_RIGHT) == glfw.PRESS:
-            controller.theta -= 2*dt
-            controller.eye = [-controller.r*np.cos(controller.theta),controller.r*np.sin(controller.theta), controller.eye[2]]
+            if glfw.get_key(window, glfw.KEY_LEFT) == glfw.PRESS:
+                controller.theta += 2*dt
+                controller.eye = [-controller.r*np.cos(controller.theta),controller.r*np.sin(controller.theta), controller.eye[2]]
 
-        if controller.eye[2] <= 0.1:
-            controller.eye[2] = 0.1
+            if glfw.get_key(window, glfw.KEY_RIGHT) == glfw.PRESS:
+                controller.theta -= 2*dt
+                controller.eye = [-controller.r*np.cos(controller.theta),controller.r*np.sin(controller.theta), controller.eye[2]]
 
-        if glfw.get_key(window, glfw.KEY_Z) == glfw.PRESS:
-            controller.r -= 2*dt
-            controller.eye = [-controller.r*np.cos(controller.theta),controller.r*np.sin(controller.theta), controller.eye[2]]
-        if glfw.get_key(window, glfw.KEY_X) == glfw.PRESS:
-            controller.r += 2*dt
-            controller.eye = [-controller.r*np.cos(controller.theta),controller.r*np.sin(controller.theta), controller.eye[2]]            
+            if controller.eye[2] <= 0.1:
+                controller.eye[2] = 0.1
+
+            if glfw.get_key(window, glfw.KEY_Z) == glfw.PRESS:
+                controller.r -= 2*dt
+                controller.eye = [-controller.r*np.cos(controller.theta),controller.r*np.sin(controller.theta), controller.eye[2]]
+
+            if glfw.get_key(window, glfw.KEY_X) == glfw.PRESS:
+                controller.r += 2*dt
+                controller.eye = [-controller.r*np.cos(controller.theta),controller.r*np.sin(controller.theta), controller.eye[2]]            
     #####################################################        
 
         controller.at = np.array([0, 0, controller.at[2]])
@@ -122,6 +163,7 @@ if __name__ == "__main__":
 
         #W: Willis
         #E: Empire State
+        #B: Burj Al Arab
 
         current = torres[controller.current]
 
@@ -129,7 +171,7 @@ if __name__ == "__main__":
 
         # Drawing
         glUseProgram(textureShaderProgram.shaderProgram)
-        glUniformMatrix4fv(glGetUniformLocation(textureShaderProgram.shaderProgram, "projection"), 1, GL_TRUE, projection)
+        glUniformMatrix4fv(glGetUniformLocation(textureShaderProgram.shaderProgram, "projection"), 1, GL_TRUE, cam_current)
         glUniformMatrix4fv(glGetUniformLocation(textureShaderProgram.shaderProgram, "view"), 1, GL_TRUE, view)
 
         sg.drawSceneGraphNode(floor, textureShaderProgram, "model")
@@ -137,8 +179,8 @@ if __name__ == "__main__":
         #LUZ? Se va a negro
         glUseProgram(textureLightShaderProgram.shaderProgram)
         glUniformMatrix4fv(glGetUniformLocation(textureLightShaderProgram.shaderProgram, "view"), 1, GL_TRUE, view)
-        glUniformMatrix4fv(glGetUniformLocation(textureLightShaderProgram.shaderProgram, "projection"), 1, GL_TRUE, projection)
-        # textureLightShaderProgram.set_light_attributes()
+        glUniformMatrix4fv(glGetUniformLocation(textureLightShaderProgram.shaderProgram, "projection"), 1, GL_TRUE, cam_current)
+        textureLightShaderProgram.set_light_attributes()
         
         sg.drawSceneGraphNode(current, textureLightShaderProgram, "model")
 

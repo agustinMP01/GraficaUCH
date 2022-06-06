@@ -11,6 +11,8 @@ class Controller:
         self.up = [0, 0, 1] #No se toca, indica normal
         self.current = 0
 
+        self.lock = True
+
     def on_key(self, window, key, scancode, action, mods):
 
         if action != glfw.PRESS and action != glfw.REPEAT:
@@ -34,13 +36,29 @@ class Controller:
             self.eye = [-1*np.cos(self.theta),1*np.sin(self.theta), 0.1] #Donde estoy
             self.at = [0, 0, 0] #Hacia donde miro
             self.up = [0, 0, 1] #No se toca, indica normal    
+            self.lock = False
 
+        if key == glfw.KEY_1:
+            self.lock = True   
+
+        if key == glfw.KEY_2:
+            self.lock = True  
+
+        if key == glfw.KEY_3:
+            self.lock = True  
+
+        if key == glfw.KEY_4:
+            self.lock = True  
+                                                 
         #CAMBIAR EDIFICIOS
         if key == glfw.KEY_E:
             self.current = 0
 
         if key == glfw.KEY_W:
             self.current = 1
+
+        if key == glfw.KEY_B:
+            self.current = 2    
 
         else:
             print('Unknown key')

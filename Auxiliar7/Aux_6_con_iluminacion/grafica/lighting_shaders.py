@@ -375,6 +375,20 @@ class SimpleGouraudShaderProgram():
         # Unbind the current VAO
         glBindVertexArray(0)
 
+    # Función agregada para simplificar las cosas
+    def set_light_attributes(self):
+        glUniform3f(glGetUniformLocation(self.shaderProgram, "La"), 1.0, 1.0, 1.0)
+        glUniform3f(glGetUniformLocation(self.shaderProgram, "Ld"), 1.0, 1.0, 1.0)
+        glUniform3f(glGetUniformLocation(self.shaderProgram, "Ls"), 1.0, 1.0, 1.0)
+        glUniform3f(glGetUniformLocation(self.shaderProgram, "Ka"), 0.2, 0.2, 0.2)
+        glUniform3f(glGetUniformLocation(self.shaderProgram, "Kd"), 0.9, 0.9, 0.9)
+        glUniform3f(glGetUniformLocation(self.shaderProgram, "Ks"), 1.0, 1.0, 1.0)
+        glUniform3f(glGetUniformLocation(self.shaderProgram, "lightPosition"), -3, 0, 3)
+        glUniform1ui(glGetUniformLocation(self.shaderProgram, "shininess"), 100)
+        glUniform1f(glGetUniformLocation(self.shaderProgram, "constantAttenuation"), 0.001)
+        glUniform1f(glGetUniformLocation(self.shaderProgram, "linearAttenuation"), 0.1)
+        glUniform1f(glGetUniformLocation(self.shaderProgram, "quadraticAttenuation"), 0.01)
+
 
 class SimpleTextureGouraudShaderProgram():
 
@@ -463,6 +477,8 @@ class SimpleTextureGouraudShaderProgram():
         self.shaderProgram = OpenGL.GL.shaders.compileProgram(
             OpenGL.GL.shaders.compileShader(vertex_shader, OpenGL.GL.GL_VERTEX_SHADER),
             OpenGL.GL.shaders.compileShader(fragment_shader, OpenGL.GL.GL_FRAGMENT_SHADER))
+        
+
 
     def setupVAO(self, gpuShape):
         glBindVertexArray(gpuShape.vao)
@@ -497,7 +513,8 @@ class SimpleTextureGouraudShaderProgram():
 
         # Unbind the current VAO
         glBindVertexArray(0)
-
+    
+    # Función agregada para simplificar las cosas
     def set_light_attributes(self):
         glUniform3f(glGetUniformLocation(self.shaderProgram, "La"), 1.0, 1.0, 1.0)
         glUniform3f(glGetUniformLocation(self.shaderProgram, "Ld"), 1.0, 1.0, 1.0)
@@ -510,6 +527,7 @@ class SimpleTextureGouraudShaderProgram():
         glUniform1f(glGetUniformLocation(self.shaderProgram, "constantAttenuation"), 0.001)
         glUniform1f(glGetUniformLocation(self.shaderProgram, "linearAttenuation"), 0.1)
         glUniform1f(glGetUniformLocation(self.shaderProgram, "quadraticAttenuation"), 0.01)
+
 
 class SimplePhongShaderProgram:
 
