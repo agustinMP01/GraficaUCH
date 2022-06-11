@@ -1,3 +1,4 @@
+from poplib import POP3
 import glfw
 from OpenGL.GL import *
 import OpenGL.GL.shaders
@@ -12,16 +13,16 @@ import grafica.scene_graph as sg
 from grafica.assets_path import getAssetPath
 
 
-def create_floor(pipeline):
+def create_floor(pipeline, texture):
     shapeFloor = bs.createTextureQuad(1, 1)
     gpuFloor = es.GPUShape().initBuffers()
     pipeline.setupVAO(gpuFloor)
     gpuFloor.texture = es.textureSimpleSetup(
-        getAssetPath("paisaje.jpg"), GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR)
+        getAssetPath(texture), GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_LINEAR, GL_LINEAR)
     gpuFloor.fillBuffers(shapeFloor.vertices, shapeFloor.indices, GL_STATIC_DRAW)
 
     floor = sg.SceneGraphNode("floor")
-    floor.transform = tr.scale(2,2,1)
+    floor.transform = tr.uniformScale(2)
     floor.childs += [gpuFloor]
 
     return floor
@@ -99,7 +100,7 @@ def empire_state(pipeline):
 
     #Empire State
     empire = sg.SceneGraphNode("empire")
-    empire.transform = tr.uniformScale(1)
+    empire.transform = tr.uniformScale(0.5)
     empire.childs += [base, main, floor1, floor2, floor3, floor4]
 
     return empire
@@ -177,15 +178,48 @@ def willis_tower(pipeline):
 
     #willis tower
     willis = sg.SceneGraphNode("willis")
-    willis.transform = tr.uniformScale(1)
+    willis.transform = tr.uniformScale(0.5)
     willis.childs += [torre50, torre66, torre90, torre108]
 
     return willis
 
 def burj(pipeline):
 
-    #curva?
-    
+    #Nota al ayudante: No pude entender curvas antes de la entrega, gg:(
 
+    #edificio
+    shapeBox = bs.createTextureNormalsCube("burj.jpg")
+    gpuBox = es.GPUShape().initBuffers()
+    pipeline.setupVAO(gpuBox)
+    gpuBox.texture = es.textureSimpleSetup(
+        getAssetPath("burj.jpg"), GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR)
+    gpuBox.fillBuffers(shapeBox.vertices, shapeBox.indices, GL_STATIC_DRAW)
+
+    shapeBox2 = bs.createTextureNormalsCube("pholder_w.jpg")
+    gpuBox2 = es.GPUShape().initBuffers()
+    pipeline.setupVAO(gpuBox2)
+    gpuBox2.texture = es.textureSimpleSetup(
+        getAssetPath("pholder_w.jpg"), GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR)
+    gpuBox2.fillBuffers(shapeBox2.vertices, shapeBox2.indices, GL_STATIC_DRAW)
+
+    #ed1
+    ed1 = sg.SceneGraphNode("ed1")
+    ed1.transform = tr.matmul([tr.rotationZ(0.44),tr.scale(0.25,1.2,3.094),tr.translate(-1.5,0,0.5)])
+    ed1.childs += [gpuBox]
+
+    #ed2
+    ed2 = sg.SceneGraphNode("ed1")
+    ed2.transform = tr.matmul([tr.rotationZ(-0.44),tr.scale(0.25,1.2,3.094),tr.translate(1.5,0,0.5)])
+    ed2.childs += [gpuBox]
+
+    #tapa
+    tapa = sg.SceneGraphNode("tapa")
+    tapa.transform = tr.matmul([tr.scale(0.4,0.01,3.5),tr.translate(0,-75,0.5)])
+    tapa.childs += [gpuBox2]
+
+    #burj
+    burj = sg.SceneGraphNode("burj")
+    burj.transform = tr.uniformScale(0.5)
+    burj.childs += [ed1, ed2, tapa]
 
     return burj

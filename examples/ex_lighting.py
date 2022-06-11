@@ -37,7 +37,6 @@ class Controller:
         self.lightingModel = LIGHT_FLAT
         self.shape = SHAPE_RED_CUBE
 
-
 # We will use the global controller as communication with the callback function
 controller = Controller()
 
@@ -80,6 +79,8 @@ def on_key(window, key, scancode, action, mods):
 
     elif key == glfw.KEY_ESCAPE:
         glfw.set_window_should_close(window, True)
+
+
 
 
 if __name__ == "__main__":
@@ -140,6 +141,7 @@ if __name__ == "__main__":
 
     t0 = glfw.get_time()
     camera_theta = np.pi / 4
+    shiny = 0.01
 
     while not glfw.window_should_close(window):
 
@@ -156,6 +158,15 @@ if __name__ == "__main__":
 
         if (glfw.get_key(window, glfw.KEY_RIGHT) == glfw.PRESS):
             camera_theta += 2 * dt
+
+        if (glfw.get_key(window,glfw.KEY_UP)== glfw.PRESS) and shiny < 100:
+            shiny += dt
+
+        if (glfw.get_key(window,glfw.KEY_DOWN)== glfw.PRESS) and shiny >0:
+            shiny -= dt
+
+
+
 
         projection = tr.ortho(-1, 1, -1, 1, 0.1, 100)
         projection = tr.perspective(45, float(width) / float(height), 0.1, 100)
@@ -240,10 +251,11 @@ if __name__ == "__main__":
         glUniform3f(glGetUniformLocation(lightingPipeline.shaderProgram, "viewPosition"), viewPos[0], viewPos[1],
                     viewPos[2])
         glUniform1ui(glGetUniformLocation(lightingPipeline.shaderProgram, "shininess"), 100)
+        print(shiny)
 
-        glUniform1f(glGetUniformLocation(lightingPipeline.shaderProgram, "constantAttenuation"), 0.0001)
+        glUniform1f(glGetUniformLocation(lightingPipeline.shaderProgram, "constantAttenuation"), 0.0001) #atenua color?
         glUniform1f(glGetUniformLocation(lightingPipeline.shaderProgram, "linearAttenuation"), 0.03)
-        glUniform1f(glGetUniformLocation(lightingPipeline.shaderProgram, "quadraticAttenuation"), 0.01)
+        glUniform1f(glGetUniformLocation(lightingPipeline.shaderProgram, "quadraticAttenuation"), shiny)
 
         glUniformMatrix4fv(glGetUniformLocation(lightingPipeline.shaderProgram, "projection"), 1, GL_TRUE, projection)
         glUniformMatrix4fv(glGetUniformLocation(lightingPipeline.shaderProgram, "view"), 1, GL_TRUE, view)

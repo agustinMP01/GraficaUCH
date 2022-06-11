@@ -17,7 +17,8 @@ from OpenGL.GL import *
 import OpenGL.GL.shaders
 import numpy as np
 from PIL import Image
-from grafica.gpu_shape import GPUShape
+from grafica.gpu_shape import GPUShape  
+import grafica.basic_shapes as bs
 
 __author__ = "Daniel Calderon"
 __license__ = "MIT"
@@ -26,6 +27,35 @@ __license__ = "MIT"
 # 1 byte = 8 bits
 SIZE_IN_BYTES = 4
 
+def toGPUShape(shape, wrapMode=None, filterMode=None):
+    assert isinstance(shape, bs.Shape)
+
+    vertexData = np.array(shape.vertices, dtype=np.float32)
+    indices = np.array(shape.indices, dtype=np.uint32)
+
+    # Here the new shape will be stored
+    gpuShape = GPUShape()
+
+    gpuShape.size = len(shape.indices)
+    gpuShape.vao = glGenVertexArrays(1)
+    gpuShape.vbo = glGenBuffers(1)
+    gpuShape.ebo = glGenBuffers(1)
+
+    # Vertex data must be attached to a Vertex Buffer Object (VBO)
+    glBindBuffer(GL_ARRAY_BUFFER, gpuShape.vbo)
+    glBufferData(GL_ARRAY_BUFFER, len(vertexData) * INT_BYTES, vertexData, GL_STATIC_DRAW)
+
+    # Connections among vertices are stored in the Elements Buffer Object (EBO)
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gpuShape.ebo)
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, len(indices) * INT_BYTES, indices, GL_STATIC_DRAW)
+
+    if shape.textureFileName is not None:
+        assert wrapMode is not None and filterMode is not None
+
+        gpuShape.texture = glGenTextures(1)
+        textureSimpleSetup(gpuShape.texture, shape.textureFileName, wrapMode, filterMode)
+
+    return gpuShape
 
 def textureSimpleSetup(imgName, sWrapMode, tWrapMode, minFilterMode, maxFilterMode):
     # wrapMode: GL_REPEAT, GL_CLAMP_TO_EDGE
