@@ -183,6 +183,30 @@ def willis_tower(pipeline):
 
     return willis
 
+def color_sphere1(pipeline):
+    shapeSphere = bs.create_sphere1(3,50,50,[1,1,1])
+    gpuSphere = es.GPUShape().initBuffers()
+    pipeline.setupVAO(gpuSphere)
+    gpuSphere.fillBuffers(shapeSphere.vertices, shapeSphere.indices, GL_STATIC_DRAW)
+
+    sphere = sg.SceneGraphNode("sphere")
+    sphere.transform = tr.matmul([tr.translate(0,-0.185,0),tr.scale(0.3,0.15,0.292)])
+    sphere.childs += [gpuSphere]
+
+    return sphere
+
+def color_sphere2(pipeline):
+    shapeSphere = bs.create_sphere2(3,50,50,[1,1,1])
+    gpuSphere = es.GPUShape().initBuffers()
+    pipeline.setupVAO(gpuSphere)
+    gpuSphere.fillBuffers(shapeSphere.vertices, shapeSphere.indices, GL_STATIC_DRAW)
+
+    sphere = sg.SceneGraphNode("sphere")
+    sphere.transform = tr.matmul([tr.translate(0,-0.185,0),tr.scale(0.3,0.15,0.292)])
+    sphere.childs += [gpuSphere]
+
+    return sphere
+
 def burj(pipeline):
 
     #Nota al ayudante: No pude entender curvas antes de la entrega, gg:(
@@ -219,7 +243,8 @@ def burj(pipeline):
 
     #burj
     burj = sg.SceneGraphNode("burj")
-    burj.transform = tr.uniformScale(0.5)
+    burj.transform = tr.uniformScale(0.25)
     burj.childs += [ed1, ed2, tapa]
+
 
     return burj

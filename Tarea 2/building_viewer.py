@@ -41,6 +41,7 @@ if __name__ == "__main__":
     textureShaderProgram = es.SimpleTextureModelViewProjectionShaderProgram() 
     lightShaderProgram = ls.SimpleGouraudShaderProgram()  
     textureLightShaderProgram = ls.SimpleTextureGouraudShaderProgram()
+    SimpleShader = es.SimpleModelViewProjectionShaderProgram()
 
     #Color de fondo*
     glClearColor(0, 0.7, 0.5, 0.8)
@@ -57,6 +58,8 @@ if __name__ == "__main__":
     empire = modelost.empire_state(textureLightShaderProgram)
     willis = modelost.willis_tower(textureLightShaderProgram)
     burj = modelost.burj(textureLightShaderProgram)
+    sphere1 = modelost.color_sphere1(SimpleShader)
+    sphere2 = modelost.color_sphere2(SimpleShader)
 
     #Lista auxiliar para cambiar facilmente entre modelos
     torres = [empire, willis, burj]
@@ -205,6 +208,14 @@ if __name__ == "__main__":
 
         sg.drawSceneGraphNode(floor_current, textureShaderProgram, "model")
 
+        
+        glUseProgram(SimpleShader.shaderProgram)
+        glUniformMatrix4fv(glGetUniformLocation(SimpleShader.shaderProgram, "view"), 1, GL_TRUE, view)
+        glUniformMatrix4fv(glGetUniformLocation(SimpleShader.shaderProgram, "projection"), 1, GL_TRUE, cam_current)
+
+        sg.drawSceneGraphNode(sphere1, SimpleShader, "model")
+        sg.drawSceneGraphNode(sphere2, SimpleShader, "model")
+
         #Dibujamos los modelos, figuras en 3d
         glUseProgram(textureLightShaderProgram.shaderProgram)
         glUniformMatrix4fv(glGetUniformLocation(textureLightShaderProgram.shaderProgram, "view"), 1, GL_TRUE, view)
@@ -216,7 +227,7 @@ if __name__ == "__main__":
         #   Burj cambia a un tono mas amarillento pero no tan notorio (ver codigo en grafica<lighting_shader<set_light_attributes)
         #Factores Ka, Kd, Ks <- Cambian ligeramente para simular las ventanas de los edificos
         textureLightShaderProgram.set_light_attributes(controller.current)
-        
+
         #Dibuja el edificio actual.
         sg.drawSceneGraphNode(current, textureLightShaderProgram, "model")
 

@@ -637,3 +637,71 @@ def createTextureNormalsCube(image_filename):
         20, 21, 22, 22, 23, 20]  # Y-
 
     return Shape(vertices, indices, image_filename)
+
+def create_sphere1(r,lats,longs, color): #Funcion que crea una esfera, recibe parametros;
+    #r <- radio
+    #lats <- cuantos puntos recorre en theta
+    #long <- cuantos puntos recorre en phi
+    #color <- Lista de 3 elementos RGB
+
+    dtheta = np.pi/(2*lats) # paso 2pi
+    dphi = np.pi/(longs) # paso pi
+    vertices = []
+    indices = []
+    for i in range(lats+1): 
+        theta = np.pi/2 - i*dtheta #doy la vuelta completa
+        xy = r*np.cos(theta) # xy
+        z = r*np.sin(theta) #z
+        for j in range(longs+1): # por cada uno de estos circulos
+            phi = j*dphi 
+            x = xy*np.cos(phi) # hafo el x e y
+            y = xy*np.sin(phi)
+            vertices += [x,y,z,color[0],color[1],color[2]] # añado el punto con color
+    
+    for i in range(longs): #empiezo a formar el orden de puntos
+        k1 = i*(lats+1)
+        k2 = k1 + lats + 1
+
+        for j in range(lats):
+            if i != 0:
+                indices += [k1,k2,k1+1] # uno los puntos
+            if i!= (longs-1):
+                indices += [k1+1,k2,k2+1] # uno los puntos
+            k1 += 1
+            k2 += 1
+    
+    return Shape(vertices,indices)
+
+def create_sphere2(r,lats,longs, color): #Funcion que crea una esfera, recibe parametros;
+    #r <- radio
+    #lats <- cuantos puntos recorre en theta
+    #long <- cuantos puntos recorre en phi
+    #color <- Lista de 3 elementos RGB
+
+    dtheta = np.pi/(2*lats) # paso 2pi
+    dphi = np.pi/(longs) # paso pi
+    vertices = []
+    indices = []
+    for i in range(lats+1): 
+        theta = np.pi/2 - i*dtheta #doy la vuelta completa
+        xy = r*np.cos(theta) # xy
+        z = r*np.sin(theta) #z
+        for j in range(longs+1): # por cada uno de estos circulos
+            phi = j*dphi 
+            x = xy*np.cos(phi) # hafo el x e y
+            y = xy*np.sin(phi)
+            vertices += [x,y,z,color[0],color[1],color[2]] # añado el punto con color
+    
+    for i in range(longs): #empiezo a formar el orden de puntos
+        k1 = i*(lats+1)
+        k2 = k1 + lats + 1
+
+        for j in range(lats):
+            if i != 0:
+                indices += [k1,k2,k1+1] # uno los puntos
+            if i!= (longs-1):
+                indices += [k1+1,k2,k2+1] # uno los puntos
+            k1 += 1
+            k2 += 1
+    
+    return Shape(vertices,indices)    
