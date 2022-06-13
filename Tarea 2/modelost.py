@@ -183,30 +183,6 @@ def willis_tower(pipeline):
 
     return willis
 
-def color_sphere1(pipeline):
-    shapeSphere = bs.create_sphere1(3,50,50,[1,1,1])
-    gpuSphere = es.GPUShape().initBuffers()
-    pipeline.setupVAO(gpuSphere)
-    gpuSphere.fillBuffers(shapeSphere.vertices, shapeSphere.indices, GL_STATIC_DRAW)
-
-    sphere = sg.SceneGraphNode("sphere")
-    sphere.transform = tr.matmul([tr.translate(0,-0.185,0),tr.scale(0.3,0.15,0.292)])
-    sphere.childs += [gpuSphere]
-
-    return sphere
-
-def color_sphere2(pipeline):
-    shapeSphere = bs.create_sphere2(3,50,50,[1,1,1])
-    gpuSphere = es.GPUShape().initBuffers()
-    pipeline.setupVAO(gpuSphere)
-    gpuSphere.fillBuffers(shapeSphere.vertices, shapeSphere.indices, GL_STATIC_DRAW)
-
-    sphere = sg.SceneGraphNode("sphere")
-    sphere.transform = tr.matmul([tr.translate(0,-0.185,0),tr.scale(0.3,0.15,0.292)])
-    sphere.childs += [gpuSphere]
-
-    return sphere
-
 def burj(pipeline):
 
     #Nota al ayudante: No pude entender curvas antes de la entrega, gg:(
@@ -243,8 +219,30 @@ def burj(pipeline):
 
     #burj
     burj = sg.SceneGraphNode("burj")
-    burj.transform = tr.uniformScale(0.25)
+    burj.transform = tr.uniformScale(0.35)
     burj.childs += [ed1, ed2, tapa]
 
 
     return burj
+
+def cachos_burj(pipeline,R0,R1,R2,R3,N=50):
+    
+    #Puntos Bezier
+    R0 = np.array([[0.07008468, -0.25957928,  1.2246171 ]]).T
+    R1 = np.array([[0.37271957, 0.40544627, 1.12587733]]).T
+    R2 = np.array([[0.21996678, 0.13868585, 1.1708493]]).T
+    R3 = np.array([[0.2356832, 0.17104545, -0.08064855]]).T
+
+    shapeCacho = bs.CurvaBezier(R0,R1,R2,R3,N)
+    gpuCacho = es.GPUShape().initBuffers()
+    pipeline.setupVAO(gpuCacho)
+    gpuCacho.fillBuffers(shapeCacho.vertices, shapeCacho.indices, GL_STATIC_DRAW)
+        
+    cacho = sg.SceneGraphNode("cacho")
+    cacho.transform = tr.identity()
+    cacho.childs += [gpuCacho]
+
+    return cacho
+
+
+

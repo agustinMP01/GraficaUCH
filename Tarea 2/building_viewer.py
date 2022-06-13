@@ -58,8 +58,14 @@ if __name__ == "__main__":
     empire = modelost.empire_state(textureLightShaderProgram)
     willis = modelost.willis_tower(textureLightShaderProgram)
     burj = modelost.burj(textureLightShaderProgram)
-    sphere1 = modelost.color_sphere1(SimpleShader)
-    sphere2 = modelost.color_sphere2(SimpleShader)
+
+    #Intente usar Bezier. Mi idea era crear 1 curva y luego con un ciclo generar las demas (Si, muy demandante guardar 5+ curvas).
+    #Para esto tuve que editar basic_shapes desde la linea 641.
+    cachos = modelost.cachos_burj(SimpleShader,
+    np.array([[0.07008468, -0.25957928,  1.2246171 ]]).T,
+        np.array([[0.37271957, 0.40544627, 1.12587733]]).T, 
+            np.array([[0.21996678, 0.13868585, 1.1708493]]).T,
+                np.array([[0.2356832, 0.17104545, -0.08064855]]).T)
 
     #Lista auxiliar para cambiar facilmente entre modelos
     torres = [empire, willis, burj]
@@ -191,6 +197,31 @@ if __name__ == "__main__":
         #Define el vector view
         view = tr.lookAt(controller.eye, controller.at, controller.up)
 
+    #######################################################
+
+        # if glfw.get_key(window, glfw.KEY_J) == glfw.PRESS:
+        #     R0[0] -= dt/4
+
+        # if glfw.get_key(window, glfw.KEY_K) == glfw.PRESS:
+        #     R0[1] -= dt/4
+
+        # if glfw.get_key(window, glfw.KEY_L) == glfw.PRESS:
+        #     R0[0] += dt/4
+
+        # if glfw.get_key(window, glfw.KEY_I) == glfw.PRESS:
+        #     R0[1] += dt/4
+
+        # if glfw.get_key(window, glfw.KEY_U) == glfw.PRESS:
+        #     R0[2] += dt/4
+
+        # if glfw.get_key(window, glfw.KEY_O) == glfw.PRESS:
+        #     R0[2] -= dt/4
+
+
+
+        # print(R0)
+
+
 ###########################################################################
 
         #Lista auxiliar que permite dibujar la torre seleccionada en un mismo bloque de codigo
@@ -208,13 +239,13 @@ if __name__ == "__main__":
 
         sg.drawSceneGraphNode(floor_current, textureShaderProgram, "model")
 
-        
-        glUseProgram(SimpleShader.shaderProgram)
-        glUniformMatrix4fv(glGetUniformLocation(SimpleShader.shaderProgram, "view"), 1, GL_TRUE, view)
-        glUniformMatrix4fv(glGetUniformLocation(SimpleShader.shaderProgram, "projection"), 1, GL_TRUE, cam_current)
+        #Si esta dibujando el Burj, dibujar tambien las curvas
+        if controller.current == 2:
+            glUseProgram(SimpleShader.shaderProgram)
+            glUniformMatrix4fv(glGetUniformLocation(SimpleShader.shaderProgram, "view"), 1, GL_TRUE, view)
+            glUniformMatrix4fv(glGetUniformLocation(SimpleShader.shaderProgram, "projection"), 1, GL_TRUE, cam_current)
 
-        sg.drawSceneGraphNode(sphere1, SimpleShader, "model")
-        sg.drawSceneGraphNode(sphere2, SimpleShader, "model")
+            sg.drawSceneGraphNode(cachos, SimpleShader, "model")
 
         #Dibujamos los modelos, figuras en 3d
         glUseProgram(textureLightShaderProgram.shaderProgram)

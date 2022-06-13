@@ -638,70 +638,45 @@ def createTextureNormalsCube(image_filename):
 
     return Shape(vertices, indices, image_filename)
 
-def create_sphere1(r,lats,longs, color): #Funcion que crea una esfera, recibe parametros;
-    #r <- radio
-    #lats <- cuantos puntos recorre en theta
-    #long <- cuantos puntos recorre en phi
-    #color <- Lista de 3 elementos RGB
+##################### MOD BEZIER AUX 8 #########################
 
-    dtheta = np.pi/(2*lats) # paso 2pi
-    dphi = np.pi/(longs) # paso pi
-    vertices = []
+def generateT(t):
+    return np.array([[1, t, t ** 2, t ** 3]]).T
+
+def bezierMatrix(P0, P1, P2, P3):
+    # Generate a matrix concatenating the columns
+    G = np.concatenate((P0, P1, P2, P3), axis=1)
+
+    # Bezier base matrix is a constant
+    Mb = np.array([[1, -3, 3, -1], [0, 3, -6, 3], [0, 0, 3, -3], [0, 0, 0, 1]])
+
+    return np.matmul(G, Mb)
+
+def evalCurve(M, N): #Retorna lista de puntos [[x,y,z],[i,j,k],[...]...] x<- float y<- float z<- float
+    # The parameter t should move between 0 and 1
+    ts = np.linspace(0.0, 1.0, N)
+
+    # The computed value in R3 for each sample will be stored here
+    curve = []
+
+    for i in range(len(ts)):
+        T = generateT(ts[i])
+
+        curve += [np.matmul(M, T).T[0][0], np.matmul(M, T).T[0][1], np.matmul(M, T).T[0][2]]  # x, y, z 
+        curve += [1,0,0] #Agrega el color
+
+    return curve  # N x 3
+
+def CurvaBezier(P0 :float, P1: float, P2: float, P3: float, N: int):
+    '''
+    CurvaBezier: Toma 4 puntos (x,y,z) como puntos de control y 1 entero como la cantidad de vertices a calcular
+
+    '''
+
+    BezMatrix = bezierMatrix(P0,P1,P2,P3)
+    vertices = evalCurve(BezMatrix, N)
     indices = []
-    for i in range(lats+1): 
-        theta = np.pi/2 - i*dtheta #doy la vuelta completa
-        xy = r*np.cos(theta) # xy
-        z = r*np.sin(theta) #z
-        for j in range(longs+1): # por cada uno de estos circulos
-            phi = j*dphi 
-            x = xy*np.cos(phi) # hafo el x e y
-            y = xy*np.sin(phi)
-            vertices += [x,y,z,color[0],color[1],color[2]] # añado el punto con color
-    
-    for i in range(longs): #empiezo a formar el orden de puntos
-        k1 = i*(lats+1)
-        k2 = k1 + lats + 1
+    for k in range(0,(N//2)-1):
+        indices += [2*k,2*k+1,2*k+2] #Une los indices de la forma 0,1,2,2,3,4 para unir los puntos seguidos, sin saltos
 
-        for j in range(lats):
-            if i != 0:
-                indices += [k1,k2,k1+1] # uno los puntos
-            if i!= (longs-1):
-                indices += [k1+1,k2,k2+1] # uno los puntos
-            k1 += 1
-            k2 += 1
-    
-    return Shape(vertices,indices)
-
-def create_sphere2(r,lats,longs, color): #Funcion que crea una esfera, recibe parametros;
-    #r <- radio
-    #lats <- cuantos puntos recorre en theta
-    #long <- cuantos puntos recorre en phi
-    #color <- Lista de 3 elementos RGB
-
-    dtheta = np.pi/(2*lats) # paso 2pi
-    dphi = np.pi/(longs) # paso pi
-    vertices = []
-    indices = []
-    for i in range(lats+1): 
-        theta = np.pi/2 - i*dtheta #doy la vuelta completa
-        xy = r*np.cos(theta) # xy
-        z = r*np.sin(theta) #z
-        for j in range(longs+1): # por cada uno de estos circulos
-            phi = j*dphi 
-            x = xy*np.cos(phi) # hafo el x e y
-            y = xy*np.sin(phi)
-            vertices += [x,y,z,color[0],color[1],color[2]] # añado el punto con color
-    
-    for i in range(longs): #empiezo a formar el orden de puntos
-        k1 = i*(lats+1)
-        k2 = k1 + lats + 1
-
-        for j in range(lats):
-            if i != 0:
-                indices += [k1,k2,k1+1] # uno los puntos
-            if i!= (longs-1):
-                indices += [k1+1,k2,k2+1] # uno los puntos
-            k1 += 1
-            k2 += 1
-    
-    return Shape(vertices,indices)    
+    return Shape(vertices,indices) 

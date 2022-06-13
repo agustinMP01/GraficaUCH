@@ -38,7 +38,7 @@ def plotCurve(ax, curve, label, color=(0, 0, 1)):
     ax.plot(xs, ys, zs, label=label, color=color)
 
 
-def evalCurve(M, N):
+def evalCurve(M, N): #Retorna lista de puntos [[x,y,z],[i,j,k],[...]...] x<- float y<- float z<- float
     # The parameter t should move between 0 and 1
     ts = np.linspace(0.0, 1.0, N)
 
