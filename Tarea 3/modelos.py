@@ -45,7 +45,6 @@ class Boat:
         #Atributos
         self.pos = [0,0,0] #Posicion x,y,z
         self.vel = 0       #Velocidad para moverse
-        self.accel = 0     #Aceleración del barco
         self.dir = 0       #Direccion, donde apunta el frente
         self.movement = tr.translate(self.pos[0],self.pos[1],0)
 
@@ -89,9 +88,9 @@ class Boat:
         piso.childs += [gpuBox]
 
         #Barco
-        self.barco = sg.SceneGraphNode("barco")
-        self.barco.transform = tr.identity()
-        self.barco.childs += [lados, piso, frentes]
+        self.model = sg.SceneGraphNode("barco")
+        self.model.transform = tr.translate(self.pos[0],self.pos[1],0)
+        self.model.childs += [lados, piso, frentes]
 
 
     def draw(self, pipeline, projection, view):
@@ -100,7 +99,7 @@ class Boat:
         glUniformMatrix4fv(glGetUniformLocation(pipeline.shaderProgram, "projection"), 1, GL_TRUE, projection)
         glUniformMatrix4fv(glGetUniformLocation(pipeline.shaderProgram, "view"), 1, GL_TRUE, view)
 
-        sg.drawSceneGraphNode(self.barco, pipeline, "model")
+        sg.drawSceneGraphNode(self.model, pipeline, "model")
 
 
 

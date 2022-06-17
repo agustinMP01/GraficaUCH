@@ -127,6 +127,14 @@ if __name__ == "__main__":
         if glfw.get_key(window, glfw.KEY_RIGHT) == glfw.PRESS:
             control.theta -= 2 * dt
 
+        #Testear mov
+        if glfw.get_key(window, glfw.KEY_J) == glfw.PRESS:
+            y += dt
+
+        if glfw.get_key(window, glfw.KEY_L) == glfw.PRESS:
+            y -= dt
+        ##################################################
+
         at_x = control.eye[0] + np.cos(control.theta)
         at_y = control.eye[1] + np.sin(control.theta)
         control.at = np.array([at_x, at_y, control.at[2]])
@@ -135,22 +143,26 @@ if __name__ == "__main__":
 
 ###########################################################################
 
-        # Drawing dice (with texture, another shader program)
+        #Dibujar piso
         glUseProgram(textureShaderProgram.shaderProgram)
         glUniformMatrix4fv(glGetUniformLocation(textureShaderProgram.shaderProgram, "projection"), 1, GL_TRUE, projection)
         glUniformMatrix4fv(glGetUniformLocation(textureShaderProgram.shaderProgram, "view"), 1, GL_TRUE, view)
 
         sg.drawSceneGraphNode(floor, textureShaderProgram, "model")
 
-        #Drawing mountain
+        #Dibujar montaña
         glUseProgram(textureLightShaderProgram.shaderProgram)
         glUniformMatrix4fv(glGetUniformLocation(textureLightShaderProgram.shaderProgram, "projection"), 1, GL_TRUE, projection)
         glUniformMatrix4fv(glGetUniformLocation(textureLightShaderProgram.shaderProgram, "view"), 1, GL_TRUE, view)
+
+        #Setea luces
         textureLightShaderProgram.set_light_attributes()
 
         sg.drawSceneGraphNode(mountain, textureLightShaderProgram, "model")
 
-        barco.pos = [x,y,0] #No se esta moviendo no se pq
+        #Actualizar posicion del barco
+        barco.model.transform = tr.translate(x,y,0) #Ahora, x e y deben ser dados por la spline catmull rom
+
         barco.draw(textureLightShaderProgram, projection, view)
          
 
