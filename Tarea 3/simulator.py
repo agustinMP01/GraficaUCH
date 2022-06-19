@@ -25,7 +25,7 @@ import grafica.lighting_shaders as ls
 from grafica.assets_path import getAssetPath
 import modelos
 import controller
-
+import auxs as ax
 
 if __name__ == "__main__":
 
@@ -69,6 +69,9 @@ if __name__ == "__main__":
     barco = modelos.Boat(textureLightShaderProgram)
     x =0
     y=0
+    coordinates = ax.txtToList(sys.argv[1])
+    print(coordinates)
+
     # View and projection
     projection = tr.perspective(60, float(width)/float(height), 0.1, 100)
 
@@ -164,7 +167,7 @@ if __name__ == "__main__":
         barco.model.transform = tr.translate(x,y,0) #Ahora, x e y deben ser dados por la spline catmull rom
 
         barco.draw(textureLightShaderProgram, projection, view)
-         
+
 
         # Once the drawing is rendered, buffers are swap so an uncomplete drawing is never seen.
         glfw.swap_buffers(window)
