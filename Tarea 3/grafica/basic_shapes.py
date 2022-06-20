@@ -632,3 +632,54 @@ def createTextureNormalsCube(image_filename):
         20, 21, 22, 22, 23, 20]  # Y-
 
     return Shape(vertices, indices, image_filename)
+
+def CatmullRomRGB(points, N, r = 1, g=1, b=1): # Points: puntos por donde pasará la spline. N: "paso"
+
+    
+
+    vertices = []
+    mov = []
+    #LA IDEA AHORA ES GENERAR UNA SPLINE QUE CONSISTE DE VARIAS SPLINES ENTRE P1 Y P2, P2 Y P3, ETC. P_i perteneciente a points.
+
+    #Para descomentar esto, aumentar indentacion de todo +1 y cambiar points a subpoints
+
+    # subpoints = []
+    # for i in range(0,len(points)-1):
+    #     subpoints += [[points[i],points[i+1]]]
+    # subpoints += [[points[0],points[1]]]     
+
+    # for j in subpoints: 
+    print(points)    
+    for t in range(0,N):
+        t = t/N
+
+        p1 = int(t) 
+        p2 = (p1 +1)%len(points)
+        p3 = (p2 + 1)%len(points)
+        p0 = p1 - 1 if p1 >= 1 else len(points) - 1
+        print("p1",p1,"p2",p2,"p3",p3,"p0",p0)
+
+        t = t - int(t)
+
+        tt = t*t 
+        ttt = tt*t 
+
+        #No se pq ocupan estas ctes y no las de wiki
+        q1 = -ttt + 2 * tt - t
+        q2 = 3 * ttt - 5 * tt + 2
+        q3 = -3 * ttt + 4 * tt + t
+        q4 = ttt - tt
+
+        a = 0.5
+        x = a*(points[p0][0]*q1 + points[p1][0]*q2 + points[p2][0]*q3 + points[p3][0]*q4)
+        y = a*(points[p0][1]*q1 + points[p1][1]*q2 + points[p2][1]*q3 + points[p3][1]*q4) 
+
+
+        mov += [x,y]
+        vertices += [x,y,0,r,g,b]  
+        #print(vertices)
+
+    indices = []
+    for k in range(0,(N//2)-1):
+        indices += [2*k,2*k+1,2*k+2]   
+    return Shape(vertices,indices), mov

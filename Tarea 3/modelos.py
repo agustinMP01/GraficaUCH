@@ -1,6 +1,8 @@
 from OpenGL.GL import *
 import sys
 import os.path
+
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import grafica.transformations as tr
 import grafica.basic_shapes as bs
@@ -101,7 +103,14 @@ class Boat:
 
         sg.drawSceneGraphNode(self.model, pipeline, "model")
 
+def CatmullRom(points,pipeline):
+    shapeSpline, mov = bs.CatmullRomRGB(points,100,1,0,0)
+    gpuSpline = es.GPUShape().initBuffers()
+    pipeline.setupVAO(gpuSpline)
+    gpuSpline.fillBuffers(shapeSpline.vertices, shapeSpline.indices, GL_STATIC_DRAW)
 
+    spline = sg.SceneGraphNode("spline")
+    spline.transform = tr.identity()
+    spline.childs += [gpuSpline]
 
-
-
+    return spline, mov
