@@ -631,7 +631,7 @@ class SimplePhongShaderProgram:
             glUniform1ui(glGetUniformLocation(self.shaderProgram, "shininess"), 1000)
             glUniform1f(glGetUniformLocation(self.shaderProgram, "constantAttenuation"), 0.001)
             glUniform1f(glGetUniformLocation(self.shaderProgram, "linearAttenuation"), 0.1)
-            glUniform1f(glGetUniformLocation(self.shaderProgram, "quadraticAttenuation"), 0.01)
+            glUniform1f(glGetUniformLocation(self.shaderProgram, "quadraticAttenuation"), 0.001)
 
 
 
@@ -770,7 +770,7 @@ class SimpleTexturePhongShaderProgram:
             glUniform3f(glGetUniformLocation(self.shaderProgram, "Kd"), 0.6, 0.6, 0.6)
             glUniform3f(glGetUniformLocation(self.shaderProgram, "Ks"), 1.0, 1.0, 1.0)
             glUniform3f(glGetUniformLocation(self.shaderProgram, "lightPosition"), 0, 1, 2)
-            glUniform1ui(glGetUniformLocation(self.shaderProgram, "shininess"), 100)
+            glUniform1ui(glGetUniformLocation(self.shaderProgram, "shininess"), 1000)
             glUniform1f(glGetUniformLocation(self.shaderProgram, "constantAttenuation"), 0.001)
             glUniform1f(glGetUniformLocation(self.shaderProgram, "linearAttenuation"), 0.3)
             glUniform1f(glGetUniformLocation(self.shaderProgram, "quadraticAttenuation"), 0.01)

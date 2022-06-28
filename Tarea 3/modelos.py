@@ -11,14 +11,12 @@ import grafica.scene_graph as sg
 from grafica.assets_path import getAssetPath
 
 
-
-
 def create_floor(pipeline):
     shapeFloor = bs.createTextureQuad(2, 2)
     gpuFloor = es.GPUShape().initBuffers()
     pipeline.setupVAO(gpuFloor)
     gpuFloor.texture = es.textureSimpleSetup(
-        getAssetPath("pholder.jpg"), GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR)
+        getAssetPath("sea.jpg"), GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR)
     gpuFloor.fillBuffers(shapeFloor.vertices, shapeFloor.indices, GL_STATIC_DRAW)
 
     floor = sg.SceneGraphNode("floor")
@@ -28,11 +26,11 @@ def create_floor(pipeline):
     return floor
 
 def create_mountain(pipeline):
-    shapeBox = bs.createTextureNormalsCube("pholder.jpg")
+    shapeBox = bs.createRainbowNormalsCube()
     gpuBox = es.GPUShape().initBuffers()
     pipeline.setupVAO(gpuBox)
-    gpuBox.texture= es.textureSimpleSetup(
-        getAssetPath("pholder.jpg"), GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR) 
+    #gpuBox.texture= es.textureSimpleSetup(
+        #getAssetPath("pholder.jpg"), GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR) 
     gpuBox.fillBuffers(shapeBox.vertices, shapeBox.indices, GL_STATIC_DRAW)
 
     box = sg.SceneGraphNode("box")
@@ -45,17 +43,15 @@ class Boat:
     def __init__(self,pipeline):
 
         #Atributos
-        self.pos = [0,0,0] #Posicion x,y,z
-        self.vel = 0       #Velocidad para moverse
-        self.dir = 0       #Direccion, donde apunta el frente
-        self.movement = tr.translate(self.pos[0],self.pos[1],0)
+        self.ang = 0
+
 
         #Modelo en si
-        shapeBox = bs.createTextureNormalsCube("pholder.jpg")
+        shapeBox = bs.createTextureNormalsCube("wood.jpg")
         gpuBox = es.GPUShape().initBuffers()
         pipeline.setupVAO(gpuBox)
         gpuBox.texture= es.textureSimpleSetup(
-            getAssetPath("pholder.jpg"), GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR) 
+            getAssetPath("wood.jpg"), GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR) 
         gpuBox.fillBuffers(shapeBox.vertices, shapeBox.indices, GL_STATIC_DRAW)
 
         #Lados
@@ -91,7 +87,7 @@ class Boat:
 
         #Barco
         self.model = sg.SceneGraphNode("barco")
-        self.model.transform = tr.translate(self.pos[0],self.pos[1],0)
+        self.model.transform = tr.identity()
         self.model.childs += [lados, piso, frentes]
 
 
@@ -103,8 +99,16 @@ class Boat:
 
         sg.drawSceneGraphNode(self.model, pipeline, "model")
 
+    def update(self, points, current, ang):
+
+        if current%2 == 0:
+            self.ang = self.ang + ang[(current)%len(ang)]
+        n = len(points)
+        self.model.transform = tr.matmul([tr.translate(points[(2*current)%n],points[(2*current+1)%n],0),tr.rotationZ(self.ang)])    
+
+
 def CatmullRom(points,pipeline):
-    shapeSpline, mov = bs.CatmullRomRGB(points,100,1,0,0)
+    shapeSpline, mov, ang = bs.CatmullRomRGB(points,100,1,0,0)
     gpuSpline = es.GPUShape().initBuffers()
     pipeline.setupVAO(gpuSpline)
     gpuSpline.fillBuffers(shapeSpline.vertices, shapeSpline.indices, GL_STATIC_DRAW)
@@ -113,4 +117,4 @@ def CatmullRom(points,pipeline):
     spline.transform = tr.identity()
     spline.childs += [gpuSpline]
 
-    return spline, mov
+    return spline, mov, ang

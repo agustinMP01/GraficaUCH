@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
     # Creamos una GPUShape a partir de un obj
     # Acá pueden poner carrot.obj, eiffel.obj, suzanne.obj
-    shapeSuzanne = obj.readOBJ(getAssetPath('eiffel.obj'), (1.0, 0.0, 0.0))
+    shapeSuzanne = obj.readOBJ(getAssetPath('mount.obj'), (1.0, 0.0, 0.0))
     gpuSuzanne = es.GPUShape().initBuffers()
     lightShaderProgram.setupVAO(gpuSuzanne)
     gpuSuzanne.fillBuffers(shapeSuzanne.vertices, shapeSuzanne.indices, GL_STATIC_DRAW)

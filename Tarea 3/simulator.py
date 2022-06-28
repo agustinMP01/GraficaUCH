@@ -66,28 +66,31 @@ if __name__ == "__main__":
     # Creating shapes on GPU memory
 
     floor = modelos.create_floor(textureShaderProgram)
-    mountain = modelos.create_mountain(textureLightShaderProgram)
+    mountain = modelos.create_mountain(lightShaderProgram)
     barco = modelos.Boat(textureLightShaderProgram)
 
     #Coordenadas por donde pasará el barco, se usarán para crear la spline
-    x = 0
-    y = 0
     coordinate_list = ax.txtToList(sys.argv[1])
     coordinates = [coordinate_list[i:i+2] for i in range(0, len(coordinate_list), 2)]
     splines = []
     ln = len(coordinates)
     boatMove = []
+    angs = []
 
     for i in range(0,ln):
         points = [coordinates[i],coordinates[(i+1)%ln],coordinates[(i+2)%ln],coordinates[(i-1)%ln]]
-        new,mov = modelos.CatmullRom(points, SimpleShader)
+        new,mov, ang = modelos.CatmullRom(points, SimpleShader)
 
         splines += [new]
         boatMove+= [mov]
+        angs += [ang]
         points =[]
 
-    boatMove = boatMove[0]
-    n = len(boatMove)
+    path = ax.ListToList(boatMove)
+    angs = ax.ListToList(angs)
+    n = len(path)
+    print(len(angs))
+
     # View and projection
     projection = tr.perspective(60, float(width)/float(height), 0.1, 100)
 
@@ -97,8 +100,10 @@ if __name__ == "__main__":
     # glfw will swap buffers as soon as possible
     glfw.swap_interval(0)
 
-    count = 0
+    ti = glfw.get_time()
 
+    count = 0
+    current = 0
     while not glfw.window_should_close(window):
         # Using GLFW to check for input events
         glfw.poll_events()
@@ -108,6 +113,7 @@ if __name__ == "__main__":
         dt = t1 - t0
         t0 = t1
         count += dt
+        
         # Filling or not the shapes depending on the controller state
         if (control.fillPolygon):
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
@@ -145,12 +151,6 @@ if __name__ == "__main__":
         if glfw.get_key(window, glfw.KEY_RIGHT) == glfw.PRESS:
             control.theta -= 2 * dt
 
-        #Testear mov
-        if glfw.get_key(window, glfw.KEY_J) == glfw.PRESS:
-            y += dt
-
-        if glfw.get_key(window, glfw.KEY_L) == glfw.PRESS:
-            y -= dt
         ##################################################
 
         at_x = control.eye[0] + np.cos(control.theta)
@@ -160,6 +160,14 @@ if __name__ == "__main__":
         view = tr.lookAt(control.eye, control.at, control.up)
 
 ###########################################################################
+        #Dibujar montaña
+        glUseProgram(lightShaderProgram.shaderProgram)
+        lightShaderProgram.set_light_attributes()
+        glUniformMatrix4fv(glGetUniformLocation(lightShaderProgram.shaderProgram, "projection"), 1, GL_TRUE, projection)
+        glUniformMatrix4fv(glGetUniformLocation(lightShaderProgram.shaderProgram, "view"), 1, GL_TRUE, view)
+
+        sg.drawSceneGraphNode(mountain, lightShaderProgram, "model")
+
 
         #Dibujar piso
         glUseProgram(textureShaderProgram.shaderProgram)
@@ -168,21 +176,20 @@ if __name__ == "__main__":
 
         sg.drawSceneGraphNode(floor, textureShaderProgram, "model")
 
-        #Dibujar montaña
-        glUseProgram(textureLightShaderProgram.shaderProgram)
-        glUniformMatrix4fv(glGetUniformLocation(textureLightShaderProgram.shaderProgram, "projection"), 1, GL_TRUE, projection)
-        glUniformMatrix4fv(glGetUniformLocation(textureLightShaderProgram.shaderProgram, "view"), 1, GL_TRUE, view)
-
         #Setea luces
+        glUseProgram(textureLightShaderProgram.shaderProgram)
         textureLightShaderProgram.set_light_attributes()
 
-        sg.drawSceneGraphNode(mountain, textureLightShaderProgram, "model")
-
         #Actualizar posicion del barco
+        if count >= 0.0125:
+            count = 0
+            print(current)
+            barco.update(path,current, angs)
+            current += 1
 
-        for j in range(0,n):
-            barco.model.transform = tr.translate(boatMove[(2*j)%n],boatMove[(2*j+1)%n],0)
-
+            if current > 1400:
+                current = 0
+                print(ti-glfw.get_time())
         barco.draw(textureLightShaderProgram, projection, view)
 
         #Dibuja spline

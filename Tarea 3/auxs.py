@@ -48,3 +48,13 @@ def txtToList(text):
         list += [current_x,current_y]
 
     return list
+
+def ListToList(lista):
+  n = len(lista)
+  nueva_lista = []
+
+  for i in range(n):
+    for j in lista[i]:
+      nueva_lista +=[j]   
+
+  return nueva_lista    

@@ -505,18 +505,20 @@ def createTextureCube(image_filename):
 def createRainbowNormalsCube():
     sq3 = 0.57735027
 
+    #MODIFICADO PARA TAREA 3
+
     # Defining the location and colors of each vertex  of the shape
     vertices = [
         #    positions        colors          normals
-        -0.5, -0.5, 0.5, 1.0, 0.0, 0.0, -sq3, -sq3, sq3,
-        0.5, -0.5, 0.5, 0.0, 1.0, 0.0, sq3, -sq3, sq3,
-        0.5, 0.5, 0.5, 0.0, 0.0, 1.0, sq3, sq3, sq3,
+        -0.5, -0.5, 0.5, 1.0, 1.0, 1.0, -sq3, -sq3, sq3,
+        0.5, -0.5, 0.5, 1.0, 1.0, 1.0, sq3, -sq3, sq3,
+        0.5, 0.5, 0.5, 1.0, 1.0, 1.0, sq3, sq3, sq3,
         -0.5, 0.5, 0.5, 1.0, 1.0, 1.0, -sq3, sq3, sq3,
 
-        -0.5, -0.5, -0.5, 1.0, 1.0, 0.0, -sq3, -sq3, -sq3,
+        -0.5, -0.5, -0.5, 0.0, 1.0, 0.0, -sq3, -sq3, -sq3,
         0.5, -0.5, -0.5, 0.0, 1.0, 1.0, sq3, -sq3, -sq3,
-        0.5, 0.5, -0.5, 1.0, 0.0, 1.0, sq3, sq3, -sq3,
-        -0.5, 0.5, -0.5, 1.0, 1.0, 1.0, -sq3, sq3, -sq3]
+        0.5, 0.5, -0.5, 0.0, 1.0, 0.0, sq3, sq3, -sq3,
+        -0.5, 0.5, -0.5, 0.0, 1.0, 0.0, -sq3, sq3, -sq3]
 
     # Defining connections among vertices
     # We have a triangle every 3 indices specified
@@ -641,23 +643,13 @@ def CatmullRomRGB(points, N, r = 1, g=1, b=1): # Points: puntos por donde pasar√
     mov = []
     #LA IDEA AHORA ES GENERAR UNA SPLINE QUE CONSISTE DE VARIAS SPLINES ENTRE P1 Y P2, P2 Y P3, ETC. P_i perteneciente a points.
 
-    #Para descomentar esto, aumentar indentacion de todo +1 y cambiar points a subpoints
-
-    # subpoints = []
-    # for i in range(0,len(points)-1):
-    #     subpoints += [[points[i],points[i+1]]]
-    # subpoints += [[points[0],points[1]]]     
-
-    # for j in subpoints: 
-    print(points)    
     for t in range(0,N):
         t = t/N
 
         p1 = int(t) 
         p2 = (p1 +1)%len(points)
-        p3 = (p2 + 1)%len(points)
-        p0 = p1 - 1 if p1 >= 1 else len(points) - 1
-        print("p1",p1,"p2",p2,"p3",p3,"p0",p0)
+        p3 = (p2 + 1)%len(points) #P3 pto de control, calcula tangente con p2
+        p0 = p1 - 1 if p1 >= 1 else len(points) - 1 #P0 pto de control, calcula tangente con p1
 
         t = t - int(t)
 
@@ -674,12 +666,15 @@ def CatmullRomRGB(points, N, r = 1, g=1, b=1): # Points: puntos por donde pasar√
         x = a*(points[p0][0]*q1 + points[p1][0]*q2 + points[p2][0]*q3 + points[p3][0]*q4)
         y = a*(points[p0][1]*q1 + points[p1][1]*q2 + points[p2][1]*q3 + points[p3][1]*q4) 
 
-
         mov += [x,y]
+        ang = []
+        for i in range(len(mov)):
+            ang += [np.arctan2(mov[(2*i+3)%len(mov)]-mov[(2*i+1)%len(mov)], mov[(2*(i+1))%len(mov)] - mov[(2*i)%len(mov)])]
+
         vertices += [x,y,0,r,g,b]  
-        #print(vertices)
+
 
     indices = []
     for k in range(0,(N//2)-1):
         indices += [2*k,2*k+1,2*k+2]   
-    return Shape(vertices,indices), mov
+    return Shape(vertices,indices), mov, ang
