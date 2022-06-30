@@ -89,7 +89,6 @@ if __name__ == "__main__":
     path = ax.ListToList(boatMove)
     angs = ax.ListToList(angs)
     n = len(path)
-    print(len(angs))
 
     # View and projection
     projection = tr.perspective(60, float(width)/float(height), 0.1, 100)
@@ -181,15 +180,13 @@ if __name__ == "__main__":
         textureLightShaderProgram.set_light_attributes()
 
         #Actualizar posicion del barco
-        if count >= 0.0125:
+        if count >= 0.0078125:
             count = 0
-            print(current)
             barco.update(path,current, angs)
             current += 1
 
             if current > 1400:
                 current = 0
-                print(ti-glfw.get_time())
         barco.draw(textureLightShaderProgram, projection, view)
 
         #Dibuja spline

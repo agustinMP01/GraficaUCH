@@ -101,8 +101,7 @@ class Boat:
 
     def update(self, points, current, ang):
 
-        if current%2 == 0:
-            self.ang = self.ang + ang[(current)%len(ang)]
+        self.ang = ang[(current)%len(ang)]
         n = len(points)
         self.model.transform = tr.matmul([tr.translate(points[(2*current)%n],points[(2*current+1)%n],0),tr.rotationZ(self.ang)])    
 

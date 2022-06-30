@@ -638,7 +638,7 @@ def createTextureNormalsCube(image_filename):
 def CatmullRomRGB(points, N, r = 1, g=1, b=1): # Points: puntos por donde pasar√° la spline. N: "paso"
 
     
-
+    ang = []
     vertices = []
     mov = []
     #LA IDEA AHORA ES GENERAR UNA SPLINE QUE CONSISTE DE VARIAS SPLINES ENTRE P1 Y P2, P2 Y P3, ETC. P_i perteneciente a points.
@@ -667,11 +667,13 @@ def CatmullRomRGB(points, N, r = 1, g=1, b=1): # Points: puntos por donde pasar√
         y = a*(points[p0][1]*q1 + points[p1][1]*q2 + points[p2][1]*q3 + points[p3][1]*q4) 
 
         mov += [x,y]
-        ang = []
-        for i in range(len(mov)):
-            ang += [np.arctan2(mov[(2*i+3)%len(mov)]-mov[(2*i+1)%len(mov)], mov[(2*(i+1))%len(mov)] - mov[(2*i)%len(mov)])]
 
         vertices += [x,y,0,r,g,b]  
+
+    for i in range(len(mov)//2):
+        ang += [np.arctan2(mov[(2*i+3)%len(mov)]-mov[(2*i+1)%len(mov)], mov[(2*(i+1))%len(mov)] - mov[(2*i)%len(mov)])]
+
+
 
 
     indices = []
