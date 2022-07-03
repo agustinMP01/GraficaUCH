@@ -38,6 +38,7 @@ import os.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from grafica.assets_path import getAssetPath
 
+
 __author__ = "Daniel Calderon"
 __license__ = "MIT"
 

@@ -4,10 +4,11 @@ import numpy as np
 class Controller:
     def __init__(self):
         self.fillPolygon = True
-        self.theta = np.pi
-        self.eye = [0, 0, 0.1]
-        self.at = [0, 1, 0.1]
-        self.up = [0, 0, 1]
+        self.theta = -3*(np.pi/4)
+        self.eye = [1, 1, 1.5]
+        self.at = [0, 0, 0.1]
+        self.up = [0,0,1]
+        self.lock = True
 
     def on_key(self, window, key, scancode, action, mods):
 

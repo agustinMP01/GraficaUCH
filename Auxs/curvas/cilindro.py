@@ -128,11 +128,11 @@ if __name__ == '__main__':
 
     # Latitude and longitude of the cylinder, latitude subdivides theta, longitude
     # subdivides h
-    lat = 100
-    lon = 3
+    lat = 20
+    lon = 20
 
     # Angle step
-    dang = np.pi /(4*lat) 
+    dang = 2 * np.pi / lat
 
     # Color
     color = {
@@ -165,22 +165,22 @@ if __name__ == '__main__':
             cylinder_shape.append(es.toGPUShape(shape))
 
     # Add the two covers
-    # for j in range(lat):
-    #     ang = dang * j
+    for j in range(lat):
+        ang = dang * j
 
-    #     # Bottom
-    #     a = [0, 0, 0]
-    #     b = [r * np.cos(ang), r * np.sin(ang), 0]
-    #     c = [r * np.cos(ang + dang), r * np.sin(ang + dang), 0]
-    #     shape = bs_ext.createTriangleColorNormal(c, b, a, color['r'], color['g'], color['b'])
-    #     cylinder_shape.append(es.toGPUShape(shape))
+        # Bottom
+        a = [0, 0, 0]
+        b = [r * np.cos(ang), r * np.sin(ang), 0]
+        c = [r * np.cos(ang + dang), r * np.sin(ang + dang), 0]
+        shape = bs_ext.createTriangleColorNormal(c, b, a, color['r'], color['g'], color['b'])
+        cylinder_shape.append(es.toGPUShape(shape))
 
-    #     # Top
-    #     a = [0, 0, h]
-    #     b = [r * np.cos(ang), r * np.sin(ang), h]
-    #     c = [r * np.cos(ang + dang), r * np.sin(ang + dang), h]
-    #     shape = bs_ext.createTriangleColorNormal(c, b, a, color['r'], color['g'], color['b'])
-    #     cylinder_shape.append(es.toGPUShape(shape))
+        # Top
+        a = [0, 0, h]
+        b = [r * np.cos(ang), r * np.sin(ang), h]
+        c = [r * np.cos(ang + dang), r * np.sin(ang + dang), h]
+        shape = bs_ext.createTriangleColorNormal(c, b, a, color['r'], color['g'], color['b'])
+        cylinder_shape.append(es.toGPUShape(shape))
 
     # Create cylinder object
     obj_cylinder = bs_ext.AdvancedGPUShape(cylinder_shape, shader=phongPipeline)

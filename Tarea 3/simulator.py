@@ -69,6 +69,7 @@ if __name__ == "__main__":
     mountain = modelos.create_mountain(lightShaderProgram)
     barco = modelos.Boat(textureLightShaderProgram)
 
+
     #Coordenadas por donde pasará el barco, se usarán para crear la spline
     coordinate_list = ax.txtToList(sys.argv[1])
     coordinates = [coordinate_list[i:i+2] for i in range(0, len(coordinate_list), 2)]
@@ -150,7 +151,29 @@ if __name__ == "__main__":
         if glfw.get_key(window, glfw.KEY_RIGHT) == glfw.PRESS:
             control.theta -= 2 * dt
 
+        #CAMARAS
+
+        if glfw.get_key(window, glfw.KEY_1) == glfw.PRESS:
+            control.theta = -3*(np.pi/4)
+            control.eye = [1, 1, 1.5]
+            control.at = [0, 0, 0.1]
+            control.lock = True
+
+        if glfw.get_key(window, glfw.KEY_2) == glfw.PRESS:
+            control.theta = (np.pi/4)
+            control.eye = [-1, -1, 1.5]
+            control.at = [0, 0, 0.1]
+            control.lock = True
+        if glfw.get_key(window, glfw.KEY_3) == glfw.PRESS:
+            control.lock = False
+            cam = 3
+
+        if glfw.get_key(window, glfw.KEY_4) == glfw.PRESS:
+            control.lock = False
+            cam = 4
+
         ##################################################
+
 
         at_x = control.eye[0] + np.cos(control.theta)
         at_y = control.eye[1] + np.sin(control.theta)
@@ -167,7 +190,6 @@ if __name__ == "__main__":
 
         sg.drawSceneGraphNode(mountain, lightShaderProgram, "model")
 
-
         #Dibujar piso
         glUseProgram(textureShaderProgram.shaderProgram)
         glUniformMatrix4fv(glGetUniformLocation(textureShaderProgram.shaderProgram, "projection"), 1, GL_TRUE, projection)
@@ -183,10 +205,28 @@ if __name__ == "__main__":
         if count >= 0.0078125:
             count = 0
             barco.update(path,current, angs)
+
+            #Camaras dependientes del barco
+            if not control.lock and cam == 3:
+
+                control.theta = barco.ang
+                control.eye = [barco.x, barco.y, 1]   
+                control.at = [0, 0 , -2]          
+                control.lock = False
+
+            if not control.lock and cam == 4:
+
+                control.theta = np.arctan2(barco.y, barco.x)
+                control.eye = [0, 0, 2.5]   
+                control.at = [0, 0, -2]          
+                control.lock = False
+
             current += 1
 
             if current > 1400:
                 current = 0
+
+
         barco.draw(textureLightShaderProgram, projection, view)
 
         #Dibuja spline
