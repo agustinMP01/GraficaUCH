@@ -15,14 +15,14 @@ class Controller:
         if action != glfw.PRESS and action != glfw.REPEAT:
             return
 
-        if key == glfw.KEY_P:
+        if key == glfw.KEY_SPACE:
             self.fillPolygon = not self.fillPolygon
 
         elif key == glfw.KEY_ESCAPE:
             glfw.set_window_should_close(window, True)
 
-        elif key == glfw.KEY_W:
+        # elif key == glfw.KEY_W:
 
-            self.eye += (self.at - self.eye) * 0.05
-            self.at += (self.at - self.eye) * 0.05
+        #     self.eye += (self.at - self.eye) * 0.05
+        #     self.at += (self.at - self.eye) * 0.05
         

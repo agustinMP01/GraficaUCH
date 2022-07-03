@@ -624,12 +624,12 @@ class SimplePhongShaderProgram:
             glUniform3f(glGetUniformLocation(self.shaderProgram, "La"), 1.0, 1.0, 1.0)
             glUniform3f(glGetUniformLocation(self.shaderProgram, "Ld"), 1.0, 1.0, 1.0)
             glUniform3f(glGetUniformLocation(self.shaderProgram, "Ls"), 1.0, 1.0, 1.0)
-            glUniform3f(glGetUniformLocation(self.shaderProgram, "Ka"), 0.2, 0.2, 0.2)
-            glUniform3f(glGetUniformLocation(self.shaderProgram, "Kd"), 0.6, 0.6, 0.6)
+            glUniform3f(glGetUniformLocation(self.shaderProgram, "Ka"), 1.0, 1.0, 1.0)
+            glUniform3f(glGetUniformLocation(self.shaderProgram, "Kd"), 1.0, 1.0, 1.0)
             glUniform3f(glGetUniformLocation(self.shaderProgram, "Ks"), 1.0, 1.0, 1.0)
-            glUniform3f(glGetUniformLocation(self.shaderProgram, "lightPosition"), 0, 1, 2)
-            glUniform1ui(glGetUniformLocation(self.shaderProgram, "shininess"), 1000)
-            glUniform1f(glGetUniformLocation(self.shaderProgram, "constantAttenuation"), 0.001)
+            glUniform3f(glGetUniformLocation(self.shaderProgram, "lightPosition"), 2, 2, 2)
+            glUniform1ui(glGetUniformLocation(self.shaderProgram, "shininess"), 10)
+            glUniform1f(glGetUniformLocation(self.shaderProgram, "constantAttenuation"), 0.01)
             glUniform1f(glGetUniformLocation(self.shaderProgram, "linearAttenuation"), 0.1)
             glUniform1f(glGetUniformLocation(self.shaderProgram, "quadraticAttenuation"), 0.001)
 
@@ -763,18 +763,17 @@ class SimpleTexturePhongShaderProgram:
 
     def set_light_attributes(self):
      
-            glUniform3f(glGetUniformLocation(self.shaderProgram, "La"), 1.0, 1.0, 0.9)
-            glUniform3f(glGetUniformLocation(self.shaderProgram, "Ld"), 1.0, 1.0, 0.9)
-            glUniform3f(glGetUniformLocation(self.shaderProgram, "Ls"), 1.0, 1.0, 0.9)
-            glUniform3f(glGetUniformLocation(self.shaderProgram, "Ka"), 0.2, 0.2, 0.2)
-            glUniform3f(glGetUniformLocation(self.shaderProgram, "Kd"), 0.6, 0.6, 0.6)
+            glUniform3f(glGetUniformLocation(self.shaderProgram, "La"), 1.0, 1.0, 1.0)
+            glUniform3f(glGetUniformLocation(self.shaderProgram, "Ld"), 1.0, 1.0, 1.0)
+            glUniform3f(glGetUniformLocation(self.shaderProgram, "Ls"), 1.0, 1.0, 1.0)
+            glUniform3f(glGetUniformLocation(self.shaderProgram, "Ka"), 1.0, 1.0, 1.0)
+            glUniform3f(glGetUniformLocation(self.shaderProgram, "Kd"), 1.0, 1.0, 1.0)
             glUniform3f(glGetUniformLocation(self.shaderProgram, "Ks"), 1.0, 1.0, 1.0)
-            glUniform3f(glGetUniformLocation(self.shaderProgram, "lightPosition"), 0, 1, 2)
-            glUniform1ui(glGetUniformLocation(self.shaderProgram, "shininess"), 1000)
-            glUniform1f(glGetUniformLocation(self.shaderProgram, "constantAttenuation"), 0.001)
-            glUniform1f(glGetUniformLocation(self.shaderProgram, "linearAttenuation"), 0.3)
-            glUniform1f(glGetUniformLocation(self.shaderProgram, "quadraticAttenuation"), 0.01)
-
+            glUniform3f(glGetUniformLocation(self.shaderProgram, "lightPosition"), 2, 2, 2)
+            glUniform1ui(glGetUniformLocation(self.shaderProgram, "shininess"), 10)
+            glUniform1f(glGetUniformLocation(self.shaderProgram, "constantAttenuation"), 0.01)
+            glUniform1f(glGetUniformLocation(self.shaderProgram, "linearAttenuation"), 0.1)
+            glUniform1f(glGetUniformLocation(self.shaderProgram, "quadraticAttenuation"), 0.001)
 
 # TAREA4: Se crea este nuevo shader para usar múltiples luces con texturas
 class MultipleLightTexturePhongShaderProgram:

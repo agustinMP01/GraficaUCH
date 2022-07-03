@@ -44,31 +44,28 @@ if __name__ == "__main__":
 
     glfw.make_context_current(window)
 
-    # Connecting the callback function 'on_key' to handle keyboard events
-
+    #Definimos controlador y set_key_callback
     control = controller.Controller()
 
     glfw.set_key_callback(window, control.on_key)
 
-    # Creating shader programs for textures and for colors
+    #Definimos los shaders a usar
     textureShaderProgram = es.SimpleTextureModelViewProjectionShaderProgram()
     lightShaderProgram = ls.SimplePhongShaderProgram()  # Spoiler de luces
     textureLightShaderProgram = ls.SimpleTexturePhongShaderProgram()
     SimpleShader = es.SimpleModelViewProjectionShaderProgram()
 
-    # Setting up the clear screen color
+    #Color de limpieza de pantalla
     glClearColor(0.85, 0.85, 0.85, 1.0)
 
     # As we work in 3D, we need to check which part is in front,
     # and which one is at the back
     glEnable(GL_DEPTH_TEST)
 
-    # Creating shapes on GPU memory
-
-    floor = modelos.create_floor(textureShaderProgram)
+    #Creamos las figuras
+    floor = modelos.create_floor(SimpleShader)
     mountain = modelos.create_mountain(lightShaderProgram)
     barco = modelos.Boat(textureLightShaderProgram)
-
 
     #Coordenadas por donde pasará el barco, se usarán para crear la spline
     coordinate_list = ax.txtToList(sys.argv[1])
@@ -91,7 +88,7 @@ if __name__ == "__main__":
     angs = ax.ListToList(angs)
     n = len(path)
 
-    # View and projection
+    #definimos proyeccion
     projection = tr.perspective(60, float(width)/float(height), 0.1, 100)
 
     t0 = glfw.get_time()
@@ -99,8 +96,6 @@ if __name__ == "__main__":
 
     # glfw will swap buffers as soon as possible
     glfw.swap_interval(0)
-
-    ti = glfw.get_time()
 
     count = 0
     current = 0
@@ -112,6 +107,8 @@ if __name__ == "__main__":
         t1 = glfw.get_time()
         dt = t1 - t0
         t0 = t1
+
+        #Count mantiene cuenta de cuanto tiempo a pasado al sumar dt
         count += dt
         
         # Filling or not the shapes depending on the controller state
@@ -123,52 +120,29 @@ if __name__ == "__main__":
         # Clearing the screen in both, color and depth
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-        if glfw.get_key(window, glfw.KEY_W) == glfw.PRESS:
-            control.eye += (control.at - control.eye) * dt
-            control.at += (control.at - control.eye) * dt
-
-        if glfw.get_key(window, glfw.KEY_S) == glfw.PRESS:
-            control.eye -= (control.at - control.eye) * dt
-            control.at -= (control.at - control.eye) * dt
-
-        if glfw.get_key(window, glfw.KEY_SPACE) == glfw.PRESS:
-            control.eye[2] += 2*dt
-            control.at[2] += 2*dt
-
-        if glfw.get_key(window, glfw.KEY_LEFT_SHIFT) == glfw.PRESS:
-            control.eye[2] -= 2*dt
-            control.at[2] -= 2*dt
-
-        if glfw.get_key(window, glfw.KEY_UP) == glfw.PRESS:
-            control.at[2] += 2*dt
-
-        if glfw.get_key(window, glfw.KEY_DOWN) == glfw.PRESS:
-            control.at[2] -= 2*dt            
-
-        if glfw.get_key(window, glfw.KEY_LEFT) == glfw.PRESS:
-            control.theta += 2 * dt
-
-        if glfw.get_key(window, glfw.KEY_RIGHT) == glfw.PRESS:
-            control.theta -= 2 * dt
-
         #CAMARAS
-
         if glfw.get_key(window, glfw.KEY_1) == glfw.PRESS:
+            #Camara fija en esquina (1,1)
             control.theta = -3*(np.pi/4)
             control.eye = [1, 1, 1.5]
             control.at = [0, 0, 0.1]
             control.lock = True
 
         if glfw.get_key(window, glfw.KEY_2) == glfw.PRESS:
+            #Camara fija en esquina (-1,-1)
             control.theta = (np.pi/4)
             control.eye = [-1, -1, 1.5]
             control.at = [0, 0, 0.1]
             control.lock = True
+
+        #Camara 3 y 4 definidas mas adelante
         if glfw.get_key(window, glfw.KEY_3) == glfw.PRESS:
+            #Camara movil en el barco
             control.lock = False
             cam = 3
 
         if glfw.get_key(window, glfw.KEY_4) == glfw.PRESS:
+            #Camara movil en montaña
             control.lock = False
             cam = 4
 
@@ -182,6 +156,7 @@ if __name__ == "__main__":
         view = tr.lookAt(control.eye, control.at, control.up)
 
 ###########################################################################
+        
         #Dibujar montaña
         glUseProgram(lightShaderProgram.shaderProgram)
         lightShaderProgram.set_light_attributes()
@@ -190,14 +165,7 @@ if __name__ == "__main__":
 
         sg.drawSceneGraphNode(mountain, lightShaderProgram, "model")
 
-        #Dibujar piso
-        glUseProgram(textureShaderProgram.shaderProgram)
-        glUniformMatrix4fv(glGetUniformLocation(textureShaderProgram.shaderProgram, "projection"), 1, GL_TRUE, projection)
-        glUniformMatrix4fv(glGetUniformLocation(textureShaderProgram.shaderProgram, "view"), 1, GL_TRUE, view)
-
-        sg.drawSceneGraphNode(floor, textureShaderProgram, "model")
-
-        #Setea luces
+        #Dibujar barco
         glUseProgram(textureLightShaderProgram.shaderProgram)
         textureLightShaderProgram.set_light_attributes()
 
@@ -226,14 +194,17 @@ if __name__ == "__main__":
             if current > 1400:
                 current = 0
 
-
         barco.draw(textureLightShaderProgram, projection, view)
 
-        #Dibuja spline
+        #Dibuja piso y spline
         glUseProgram(SimpleShader.shaderProgram)
+
+        glUniformMatrix4fv(glGetUniformLocation(SimpleShader.shaderProgram, "projection"), 1, GL_TRUE, projection)
+        glUniformMatrix4fv(glGetUniformLocation(SimpleShader.shaderProgram, "view"), 1, GL_TRUE, view)
+        sg.drawSceneGraphNode(floor, SimpleShader, "floor")
+
         glUniformMatrix4fv(glGetUniformLocation(SimpleShader.shaderProgram, "projection"), 1, GL_TRUE, projection)        
         glUniformMatrix4fv(glGetUniformLocation(SimpleShader.shaderProgram, "view"), 1, GL_TRUE, view)
-
         for i in splines:
             sg.drawSceneGraphNode(i, SimpleShader, "model")
 

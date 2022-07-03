@@ -15,15 +15,13 @@ import numpy as np
 
 
 def create_floor(pipeline):
-    shapeFloor = bs.createTextureQuad(2, 2)
+    shapeFloor = bs.createRainbowQuad()
     gpuFloor = es.GPUShape().initBuffers()
     pipeline.setupVAO(gpuFloor)
-    gpuFloor.texture = es.textureSimpleSetup(
-        getAssetPath("sea.jpg"), GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR)
     gpuFloor.fillBuffers(shapeFloor.vertices, shapeFloor.indices, GL_STATIC_DRAW)
 
     floor = sg.SceneGraphNode("floor")
-    floor.transform = tr.uniformScale(2)
+    floor.transform = tr.uniformScale(1)
     floor.childs += [gpuFloor]
 
     return floor

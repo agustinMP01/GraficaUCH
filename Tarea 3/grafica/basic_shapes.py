@@ -123,10 +123,10 @@ def createRainbowQuad():
     # Defining the location and colors of each vertex  of the shape
     vertices = [
         #   positions        colors
-        -0.5, -0.5, 0.0, 1.0, 0.0, 0.0,
-        0.5, -0.5, 0.0, 0.0, 1.0, 0.0,
-        0.5, 0.5, 0.0, 0.0, 0.0, 1.0,
-        -0.5, 0.5, 0.0, 1.0, 1.0, 1.0]
+        -1, -1, 0.0, 3/255, 168/255, 187/255,
+        1, -1, 0.0, 4/255, 80/255, 106/255,
+        1, 1, 0.0, 3/255, 112/255, 145/255,
+        -1, 1, 0.0, 14/255, 54/255, 77/255]
 
     # Defining connections among vertices
     # We have a triangle every 3 indices specified
